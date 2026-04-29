@@ -326,7 +326,7 @@ dependencies = [
 
 [[package]]
 name = "codex-usage-stats"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "chrono",
  "chrono-tz",

@@ -1,6 +1,6 @@
 [package]
 name = "codex-usage-stats"
-version = "0.2.0"
+version = "0.2.1"
 description = "Codex Desktop usage dashboard"
 authors = ["Felix"]
 edition = "2021"

@@ -13,6 +13,7 @@
 - 刷新按钮重新读取 sessions 目录
 - 系统托盘支持显示窗口、退出、查看今日/7 天/30 天有效 token
 - 关闭窗口时隐藏到托盘
+- 关于标签页展示版本、数据口径、隐私说明和开源仓库
 
 ## 启动
 
@@ -47,7 +48,7 @@ build-tauri.bat
 
 ```text
 src-tauri\target\release\codex-usage-stats.exe
-src-tauri\target\release\bundle\nsis\Codex 用量统计_0.2.0_x64-setup.exe
+src-tauri\target\release\bundle\nsis\Codex 用量统计_0.2.1_x64-setup.exe
 ```
 
 ## 数据来源

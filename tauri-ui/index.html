@@ -67,6 +67,7 @@
     padding: 18px;
   }
   .panel + .panel { margin-top: 18px; }
+  .viewbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
   .tabrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .tabs { display: inline-flex; gap: 4px; background: var(--bg); padding: 3px; border-radius: 8px; border: 1px solid var(--line); }
   .tabs button {
@@ -95,7 +96,17 @@
   .card { background: var(--bg); border-radius: 8px; padding: 12px 14px; border: 1px solid var(--line); min-width: 0; }
   .card .k { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
   .card .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .view { display: block; }
+  .view.hidden { display: none; }
   .section-title { font-size: 13px; color: var(--muted); margin: 0 0 10px; font-weight: 500; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 720px) { .about-grid { grid-template-columns: 1fr; } }
+  .about-item { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; }
+  .about-item .k { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .about-item .v { font-size: 14px; overflow-wrap: anywhere; }
+  .about-copy { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
   svg { display: block; }
   .heatmap { overflow-x: auto; }
   .heatmap-grid rect { shape-rendering: crispEdges; }
@@ -129,6 +140,14 @@
     <span class="sub" id="sub"></span>
   </header>
 
+  <div class="viewbar">
+    <div class="tabs" id="view-tabs">
+      <button data-view="stats" class="active">统计</button>
+      <button data-view="about">关于</button>
+    </div>
+  </div>
+
+  <main id="stats-view" class="view">
   <section class="panel">
     <div class="tabrow">
       <div class="tabs" id="tabs">
@@ -161,6 +180,40 @@
   </section>
 
   <footer id="footer"></footer>
+  </main>
+
+  <main id="about-view" class="view hidden">
+    <section class="panel">
+      <div class="section-title">关于</div>
+      <p class="about-copy">本工具用于离线统计 Codex Desktop 本机会话日志，只读取本机文件，不上传数据。</p>
+      <div class="about-grid">
+        <div class="about-item">
+          <div class="k">应用版本</div>
+          <div class="v">v0.2.1</div>
+        </div>
+        <div class="about-item">
+          <div class="k">技术架构</div>
+          <div class="v">Tauri 2 + Rust + 原生 WebView</div>
+        </div>
+        <div class="about-item">
+          <div class="k">数据来源</div>
+          <div class="v">~/.codex/sessions</div>
+        </div>
+        <div class="about-item">
+          <div class="k">有效 token 口径</div>
+          <div class="v">非缓存输入 + 输出</div>
+        </div>
+        <div class="about-item">
+          <div class="k">隐私</div>
+          <div class="v">本地读取，不写数据库，不发送日志内容。</div>
+        </div>
+        <div class="about-item">
+          <div class="k">开源仓库</div>
+          <div class="v"><a href="https://github.com/ScalarFX/codex-usage-stats" target="_blank" rel="noreferrer">github.com/ScalarFX/codex-usage-stats</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 <div class="tip" id="tip"></div>
 <script src="./app.js"></script>

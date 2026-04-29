@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = (id) => document.getElementById(id);
-const state = { range: 'all', cache: {} };
+const state = { range: 'all', view: 'stats', cache: {} };
 
 function fmtInt(n) {
   return Number(n || 0).toLocaleString();
@@ -260,6 +260,18 @@ async function refresh() {
 }
 
 function bind() {
+  document.querySelectorAll('#view-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.classList.contains('active')) return;
+      document.querySelectorAll('#view-tabs button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      state.view = b.dataset.view;
+      $('stats-view').classList.toggle('hidden', state.view !== 'stats');
+      $('about-view').classList.toggle('hidden', state.view !== 'about');
+      $('sub').textContent = state.view === 'about' ? 'v0.2.1 · 本地离线统计' : $('sub').textContent;
+      if (state.view === 'stats') load();
+    });
+  });
   document.querySelectorAll('#tabs button').forEach(b => {
     b.addEventListener('click', () => {
       if (b.classList.contains('active')) return;
@@ -271,7 +283,7 @@ function bind() {
   });
   $('refresh').addEventListener('click', refresh);
   window.addEventListener('resize', () => {
-    if (window.__lastTrend) renderTrend(window.__lastTrend);
+    if (state.view === 'stats' && window.__lastTrend) renderTrend(window.__lastTrend);
   });
 }
 

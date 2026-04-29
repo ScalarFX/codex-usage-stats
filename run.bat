@@ -1,13 +1,12 @@
 @echo off
 setlocal
-cd /d "%~dp0"
+set "RUSTUP_HOME=D:\Apps\Rust\rustup"
+set "CARGO_HOME=D:\Apps\Rust\cargo"
+set "PATH=D:\Apps\Rust\cargo\bin;%PATH%"
 
-where python >nul 2>&1
-if errorlevel 1 (
-    echo [codex-stats] Python 3.11+ not found on PATH.
-    echo Install from https://www.python.org/downloads/ and try again.
-    pause
-    exit /b 1
+if exist "D:\Apps\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" (
+  call "D:\Apps\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" >nul
 )
 
-python -m codex_stats %*
+cd /d "%~dp0"
+npm run tauri

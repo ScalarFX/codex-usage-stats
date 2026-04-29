@@ -1,16 +1,6 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.pytest_cache/
-.venv/
-venv/
-env/
-
 # Build artifacts
 build/
 dist/
-*.spec
 *.log
 node_modules/
 src-tauri/target/
@@ -28,7 +18,6 @@ Thumbs.db
 .codex/
 sessions/
 *.jsonl
-!tests/fixtures/sessions/**/*.jsonl
 
 # OS / env
 .env

@@ -1,0 +1,13 @@
+{
+  "name": "codex-usage-stats",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Codex Desktop usage dashboard",
+  "scripts": {
+    "tauri": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}

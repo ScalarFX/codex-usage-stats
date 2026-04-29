@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Codex 用量统计</title>
+<style>
+  :root {
+    --bg: #f7f7f6;
+    --card: #ffffff;
+    --line: #e7e6e2;
+    --text: #1f1f1e;
+    --muted: #6b6b67;
+    --accent: #c96442;
+    --grid-0: #ebeae6;
+    --grid-1: #cfe6d3;
+    --grid-2: #86c798;
+    --grid-3: #4da363;
+    --grid-4: #2e7a41;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a19;
+      --card: #232321;
+      --line: #333330;
+      --text: #ececea;
+      --muted: #a0a09a;
+      --grid-0: #2a2a28;
+      --grid-1: #264d31;
+      --grid-2: #347045;
+      --grid-3: #4aa162;
+      --grid-4: #6dd287;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 32px 24px 64px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 22px; font-weight: 600; margin: 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h1 .dot {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: var(--accent); display: inline-block;
+    transform: rotate(45deg);
+  }
+  .sub { color: var(--muted); font-size: 13px; }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .panel + .panel { margin-top: 20px; }
+
+  .tabrow {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .tabs { display: inline-flex; gap: 4px; background: var(--bg); padding: 3px; border-radius: 8px; border: 1px solid var(--line); }
+  .tabs button {
+    background: transparent; border: 0; color: var(--muted);
+    padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;
+  }
+  .tabs button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .tabs button:hover:not(.active) { color: var(--text); }
+
+  .btn {
+    background: var(--card); border: 1px solid var(--line); color: var(--text);
+    padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  .btn:hover { border-color: var(--muted); }
+
+  .cards {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  @media (max-width: 720px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  .card {
+    background: var(--bg); border-radius: 8px; padding: 12px 14px;
+    border: 1px solid var(--line);
+  }
+  .card .k { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .card .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .card .v .unit { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+
+  .section-title { font-size: 13px; color: var(--muted); margin: 0 0 10px; font-weight: 500; }
+
+  svg { display: block; }
+
+  .heatmap { overflow-x: auto; }
+  .heatmap-grid rect { shape-rendering: crispEdges; }
+
+  .trend-bar { fill: var(--accent); }
+  .trend-bar:hover { opacity: .8; }
+  .axis { fill: var(--muted); font-size: 10px; }
+
+  .legend { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; justify-content: flex-end; margin-top: 6px; }
+  .legend span { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+  footer { color: var(--muted); font-size: 12px; margin-top: 24px; word-break: break-all; }
+  .err { color: #c14; }
+
+  .tip {
+    position: fixed; background: var(--text); color: var(--card);
+    padding: 4px 8px; border-radius: 4px; font-size: 11px;
+    pointer-events: none; opacity: 0; transition: opacity .1s;
+    white-space: nowrap; z-index: 10;
+  }
+  .tip.show { opacity: .95; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="dot"></span> Codex 用量统计</h1>
+    <span class="sub" id="sub"></span>
+  </header>
+
+  <section class="panel">
+    <div class="tabrow">
+      <div class="tabs" id="tabs">
+        <button data-range="all" class="active">全部</button>
+        <button data-range="30d">30 天</button>
+        <button data-range="7d">7 天</button>
+      </div>
+      <button class="btn" id="refresh">刷新</button>
+    </div>
+
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">每日有效 token</div>
+    <div id="trend"></div>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">活跃热力图（最近 53 周，按有效 token）</div>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="legend">
+      少
+      <span style="background:var(--grid-0)"></span>
+      <span style="background:var(--grid-1)"></span>
+      <span style="background:var(--grid-2)"></span>
+      <span style="background:var(--grid-3)"></span>
+      <span style="background:var(--grid-4)"></span>
+      多
+    </div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
